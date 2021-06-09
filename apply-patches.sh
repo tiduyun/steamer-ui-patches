@@ -3,7 +3,7 @@
 
 # ================================================
 # Description: Apply localized patches
-# Last Modified: Mon Apr 26, 2021 11:29
+# Last Modified: Wed Jun 09, 2021 15:03
 # Author: Allex Wang (allex.wxn@gmail.com)
 # ================================================
 
@@ -19,13 +19,14 @@ if [ ! -f "${home_page}.tmpl" ]; then
   cp ${home_page} ${home_page}.tmpl
 fi
 
-script_patch="$(cat <<'CONFIG'
+script_patch="$(cat <<CONFIG
+${APP_INITIAL_SCRIPT:-}
 <script>
 function getSteamerUiConfig () {
   return {
     'sys': {
       appBrandImage: null,
-      appName: '梯度大数据集成平台',
+      appName: '${APP_NAME:-梯度智能云}',
       copyright: ''
     }
   }
@@ -40,7 +41,10 @@ awk -v input="${script_patch}" \
 
 echo "patch "${home_page}" done."
 
-cp -f /var/www/.cache/login-bg.jpeg /var/www/steamer-ui/img/login-bg.jpeg
-grep "login-bg.png" $sh_dir/steamer-ui/css -rl |xargs sed -i"" "s#login-bg.png#login-bg.jpeg#g"
+login_bg=/var/www/.cache/login-bg.jpeg
+if [ -f $login_bg ]; then
+  cp -f $login_bg /var/www/steamer-ui/img/login-bg.jpeg
+  grep "login-bg.png" $sh_dir/steamer-ui/css -rl |xargs sed -i"" "s#login-bg.png#${login_bg##*/}#g"
+fi
 
 echo "apply localize done."
