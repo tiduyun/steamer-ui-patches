@@ -3,10 +3,14 @@
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-PREFIX ?= steamer
-# image repository prefix
-IMAGE_NAME = $(PREFIX)/steamer-ui-patches
-BUILD_VERSION := bigdata-8.0.0
+platform := linux/amd64
+prefix ?= steamer
+
+ifndef prefix
+	$(error prefix not valid)
+endif
+
+IMAGE_NAME = $(prefix)/steamer-ui-patches
 
 ifneq ("$(wildcard .version)","")
 	BUILD_VERSION := $(shell cat .version)
@@ -20,6 +24,8 @@ docker-build = \
 # enable push mode: > make push=1 build
 docker-build-args = \
 	--label build_ver=$(BUILD_VERSION) \
+	--label git_head=$(shell git rev-parse HEAD) \
+	--platform=$(platform) \
 	$(if $(push),--push,--load)
 
 get-image-name = \
@@ -29,14 +35,18 @@ get-image-name = \
 	@echo $(BUILD_VERSION) > .version
 
 version:
-	@read -p "Enter a new version: (current: $(BUILD_VERSION)) " v; \
+	@read -p "Enter a new version: ${BUILD_VERSION:+ (current: ${BUILD_VERSION})}" v; \
 	if [ "$$v" ]; then \
 		echo "The publish version is: $$v"; \
 		echo $$v > $(ROOT_DIR)/.version; \
 	fi
 
 build: .version
+ifndef BUILD_VERSION
+	$(error "'BUILD_VERSION' not defined, run 'make version' first")
+endif
 	$(call docker-build, $(get-image-name), $(docker-build-args)) .
+
 
 clean:
 	docker rmi -f $(get-image-name)
