@@ -3,7 +3,7 @@
 
 # ================================================
 # Description: Apply localized patches
-# Last Modified: Wed Jun 09, 2021 15:03
+# Last Modified: Mon Jun 21, 2021 20:27
 # Author: Allex Wang (allex.wxn@gmail.com)
 # ================================================
 
@@ -46,5 +46,11 @@ if [ -f $login_bg ]; then
   cp -f $login_bg /var/www/steamer-ui/img/login-bg.jpeg
   grep "login-bg.png" $sh_dir/steamer-ui/css -rl |xargs sed -i"" "s#login-bg.png#${login_bg##*/}#g"
 fi
+
+if [ -z "${ARGO_ENDPOINT}" ]; then
+  echo >&2 "env 'ARGO_ENDPOINT' not defined"
+  exit 1
+fi
+echo '${ARGO_ENDPOINT}' >> /etc/nginx/.vars
 
 echo "apply localize done."
