@@ -1,7 +1,7 @@
 FROM scratch
-
-ADD ./apply-patches.sh /var/www/.apply_patches.sh
-ADD ./login-bg.jpeg /var/www/.cache/
+ADD ./patch /var/patch
 
 FROM scratch
+ENV APP_NAME=梯度智能云
+ENV PATCH_FILE=/var/patch/.apply.sh
 COPY --from=0 / /

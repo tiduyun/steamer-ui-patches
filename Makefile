@@ -4,7 +4,7 @@
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 platform := linux/amd64
-prefix ?= steamer
+prefix ?= hub.tidu.io/steamer
 
 ifndef prefix
 	$(error prefix not valid)
