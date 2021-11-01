@@ -1,4 +1,5 @@
 FROM scratch
+ADD ./nginx /etc/nginx
 ADD ./patch /var/patch
 
 FROM scratch
