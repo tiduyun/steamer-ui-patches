@@ -15,7 +15,11 @@ function getSteamerUiConfig () {
   }
   var appLogo = '${LOGO_PATH:-}'
   if (appLogo) sysConfig.appLogo = appLogo
-  return { sys: sysConfig }
+  var authConfig = {
+    authType: '${APP_AUTH_TYPE:-default}',
+    tokenName: '${APP_AUTH_TOKEN_NAME:-token}'
+  }
+  return { sys: sysConfig, authConfig: authConfig }
 }
 </script>
 __CONFIG__
